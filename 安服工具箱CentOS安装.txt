@@ -1,0 +1,27 @@
+主机名：iSec
+
+磁盘分区：
+Filesystem                                                              Size                   Mounted on
+/dev/mapper/vg_atd-lv_root                                99G                        /                                                       
+/dev/mapper/vg_atd-lv_home                            550G                        /home                                            
+/dev/mapper/vg_atd-lv_capture                           30G                        /home/bds/capture
+/dev/mapper/vg_atd-lv_sample                          550G                        /home/bds/sample
+/dev/mapper/vg_atd-lv_var                                 550G                        /var
+/dev/mapper/vg_atd-lv_mysql                             419G                        /var/lib/mysql
+/dev/mapper/vg_atd00-lv_elasticsearch               4.3T                        /home/elasticsearch
+/dev/mapper/vg_atd01-lv_kvm                             1.1T                        /home/kvm
+
+【去使能日志系统】
+1.先取消挂载mysql,elasticsearch分区
+umount /var/lib/mysql
+umount /home/elasticsearch
+2.去使能
+tune2fs -O ^has_journal /dev/mapper/vg_isec-lv_mysql
+tune2fs -O ^has_journal /dev/mapper/vg_isec00-lv_elasticsearch
+3.重启系统
+reboot
+4.查看去去使能是否成功
+tune2fs -l /dev/mapper/vg_isec-lv_mysql |grep has_journal
+tune2fs -l /dev/mapper/vg_isec00-lv_elasticsearch | grep has_journal
+如果命令没有输出任何结果，则表明去使能成功。
+
